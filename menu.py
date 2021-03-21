@@ -30,10 +30,8 @@ class Menu:
 		ret = {}
 		for funcao, params in self.funcoes_params[opcao]:
 			if len(params) != 0:
-				limpar_tela()
 				ret_f = funcao(*params)
 			else:
-				limpar_tela()
 				ret_f = funcao()
 			ret.update({funcao.__name__: ret_f})
 		return ret
