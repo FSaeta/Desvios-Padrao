@@ -30,3 +30,8 @@ class Menu:
 				ret_f = funcao()
 			ret.update({funcao.__name__: ret_f})
 		return ret
+		
+	def valida_opcao(self, opcao):
+		op_permitidas = list(self.opcoes.keys())
+		if opcao not in op_permitidas:
+			raise ValueError

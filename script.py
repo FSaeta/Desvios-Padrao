@@ -1,5 +1,6 @@
 import menu
 from menu import R,G,Y,C,W
+import sys
 
 msg_menu_inicial = f"""{G}BEM VINDO AO PROGRAMA DE DESVIO PADRÃO{W}
 
@@ -9,7 +10,6 @@ msg_menu_inicial = f"""{G}BEM VINDO AO PROGRAMA DE DESVIO PADRÃO{W}
 
 {Y}[0]{W} Sair
 """
-menu_inicial = menu.Menu("Inicial", 1, msg_menu_inicial, {})
 print(msg_menu_inicial)
 #--------------------------------
 def soma(*args):
@@ -163,8 +163,25 @@ def calc_pontos_medios(classes):
 
 # Main ----------
 # ---------------
+menu_inicial = menu.Menu(nome="Inicial", id=1, msg=msg_menu_inicial, 
+						 op_dict={0:[(sys.exit,[])], 
+						 		  1:[(,)],(computar_dados,[numeros]) 
+						 		  2:[(,)],(computar_dados_grup,[numeros]) 
+						 		  3:[(,)](computar_dados_grup_classe,[numeros])
+						 		  })
+running = True
+menus = [1: menu_inicial]
+id_menu = 1
 
-op = input("op :")
+while running:
+	try:
+		menu_ativo = menus[id_menu]
+		print(menu_ativo.msg)
+		op = input("op :")
+		menu_ativo.valida_opcao(op)
+	except:
+		print(f"{R}ops... algo deu ruim{W}")
+
 if op == '1':
 	numeros = []
 	pede = True
