@@ -4,6 +4,11 @@ Y = '\033[01;33m' # amarelo
 C = '\033[36m' # ciano
 W = '\033[0m'  # branco
 
+from os import system, name
+
+def limpar_tela():
+	system('cls' if name == 'nt' else 'clear')
+
 class Menu:
 	def __init__(self, nome, id, msg, op_dict):
 		self.nome = nome
@@ -25,8 +30,10 @@ class Menu:
 		ret = {}
 		for funcao, params in self.funcoes_params[opcao]:
 			if len(params) != 0:
+				limpar_tela()
 				ret_f = funcao(*params)
 			else:
+				limpar_tela()
 				ret_f = funcao()
 			ret.update({funcao.__name__: ret_f})
 		return ret

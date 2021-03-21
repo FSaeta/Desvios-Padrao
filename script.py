@@ -4,13 +4,34 @@ import sys
 
 msg_menu_inicial = f"""{G}BEM VINDO AO PROGRAMA DE DESVIO PADRÃO{W}
 
-{Y}[1]{W} Dados não agrupados (Amostra)
-{Y}[2]{W} Dados agrupados {Y}sem{W} classe(Amostra)
-{Y}[3]{W} Dados agrupados {Y}com{W} classe(Amostra)
+{Y}[1]{W} Dados não agrupados
+{Y}[2]{W} Dados agrupados {Y}sem{W} classe
+{Y}[3]{W} Dados agrupados {Y}com{W} classe
 
 {Y}[0]{W} Sair
 """
-print(msg_menu_inicial)
+msg_simples = f"""{G}DADOS NÃO AGRUPADOS{W}
+
+{Y}[1]{W} Amostra
+{Y}[2]{W} População (A desenvolver)
+
+{Y}[0]{W} Voltar
+"""
+msg_grup = f"""{G}DADOS AGRUPADOS SEM CLASSE{W}
+
+{Y}[1]{W} Amostra
+{Y}[2]{W} População (A desenvolver)
+
+{Y}[0]{W} Voltar
+"""
+msg_grup_classe = f"""{G}DADOS AGRUPADOS POR CLASSES{W}
+
+{Y}[1]{W} Amostra
+{Y}[2]{W} População (A desenvolver)
+
+{Y}[0]{W} Voltar
+"""
+
 #--------------------------------
 def soma(*args):
 	soma = 0
@@ -161,28 +182,18 @@ def calc_pontos_medios(classes):
 		pontos_medios.append(pm)
 	return pontos_medios
 
-# Main ----------
-# ---------------
-menu_inicial = menu.Menu(nome="Inicial", id=1, msg=msg_menu_inicial, 
-						 op_dict={0:[(sys.exit,[])], 
-						 		  1:[(,)],(computar_dados,[numeros]) 
-						 		  2:[(,)],(computar_dados_grup,[numeros]) 
-						 		  3:[(,)](computar_dados_grup_classe,[numeros])
-						 		  })
-running = True
-menus = [1: menu_inicial]
-id_menu = 1
+# --------- Main Functions ----------
 
-while running:
-	try:
-		menu_ativo = menus[id_menu]
-		print(menu_ativo.msg)
-		op = input("op :")
-		menu_ativo.valida_opcao(op)
-	except:
-		print(f"{R}ops... algo deu ruim{W}")
+def mudar_id(novo_id):
+	global id_menu
+	id_menu = novo_id
+	return id_menu
 
-if op == '1':
+def muda_pede():
+	global pede
+	pede = not pede
+
+def pede_numeros():
 	numeros = []
 	pede = True
 	while pede:
@@ -191,8 +202,15 @@ if op == '1':
 			numeros.append(numero)
 		except KeyboardInterrupt:
 			pede = False
-			values = computar_dados(numeros)
+			return numeros
 
+# -----------------------------------
+
+def run_simples_amostra():
+
+	numeros = pede_numeros()
+	values = computar_dados(numeros)
+	
 	print(values)
 	print(montar_graf_simples(values))
 
@@ -200,17 +218,12 @@ if op == '1':
 	print(f"N = {values['N']}")
 	print(f"x_2 = ({values['soma_xi']} / {values['N']})²  = {values['x_2']}")
 	print(f"s² =  ({values['soma_xi2']} - {values['N']} * {values['x_2']}) / {values['N']-1}  = {values['s2']}")
-#print(f"N = {values['N']}")
-elif op == '2':
-	numeros = []
-	pede = True
-	while pede:
-		try:
-			numero = float(input("numero: "))
-			numeros.append(numero)
-		except KeyboardInterrupt:
-			pede = False
-			values = computar_dados_grup(numeros)
+
+
+def run_grupo_amostra():
+
+	numeros = pede_numeros()
+	values = computar_dados_grup(numeros)
 
 	print(values)
 	print(montar_graf_grup(values))
@@ -220,17 +233,12 @@ elif op == '2':
 	print(f"N = {values['N']}")
 	print(f"x_2 = ({values['soma_xini']} / {values['N']})²  = {values['x_2']}")
 	print(f"s² =  ({values['soma_xini2']} - {values['N']} * {values['x_2']}) / {values['N']-1}  = {values['s2']}")
-#print(f"N = {values['N']}")
-elif op == '3':
-	numeros = []
-	pede = True
-	while pede:
-		try:
-			numero = float(input("numero: "))
-			numeros.append(numero)
-		except KeyboardInterrupt:
-			pede = False
-			values = computar_dados_grup_classe(numeros)
+
+
+def run_grupo_class_amostra():
+
+	numeros = pede_numeros()		
+	values = computar_dados_grup_classe(numeros)
 
 	print(values)
 	print(montar_graf_grup_classe(values))
@@ -240,3 +248,41 @@ elif op == '3':
 	print(f"N = {values['soma_ni']}")
 	print(f"x_2 = ({values['soma_xini']} / {values['soma_ni']})²  = {values['x_2']}")
 	print(f"s² =  ({values['soma_xini2']} - {values['soma_ni']} * {values['x_2']}) / {values['soma_ni']-1}  = {values['s2']}")
+
+menu_inicial = menu.Menu(nome="Inicial", id=0, msg=msg_menu_inicial, 
+						 op_dict={0:[(sys.exit,[])], 
+						 		  1:[(mudar_id,[1])],
+						 		  2:[(mudar_id,[2])],
+						 		  3:[(mudar_id,[3])]
+						 		  })
+menu_simples = menu.Menu(nome="Simples", id=1, msg=msg_simples, 
+						 op_dict={0:[(mudar_id,[0])],
+						 		  1:[(run_simples_amostra,[])],
+						 		  2:[(print,[f"{R}FUNCIONALIDADE EM DESENVOLVIMENTO{W}"])],
+						 		  })
+menu_grup = menu.Menu(nome="Grupo sem Classe", id=2, msg=msg_grup, 
+						 op_dict={0:[(mudar_id,[0])],
+						 		  1:[(run_grupo_amostra,[])],
+						 		  2:[(print,[f"{R}FUNCIONALIDADE EM DESENVOLVIMENTO{W}"])],
+						 		  })
+menu_grup_classe = menu.Menu(nome="Grupo por Classe", id=3, msg=msg_grup_classe, 
+						 op_dict={0:[(mudar_id,[0])],
+						 		  1:[(run_grupo_class_amostra,[])],
+						 		  2:[(print,[f"{R}FUNCIONALIDADE EM DESENVOLVIMENTO{W}"])],
+						 		  })
+if __name__ == '__main__':
+	running = True
+	menus = {0:menu_inicial, 1:menu_simples, 2:menu_grup, 3:menu_grup_classe}
+	id_menu = 0
+
+	while running:
+		try:
+			menu_ativo = menus[id_menu]
+			print(menu_ativo.msg)
+			op = int(input("op :"))
+			menu_ativo.valida_opcao(op)
+			menu_ativo.exec_funcs(op)
+		except SystemExit:
+			running = False
+		except:
+			print(f"{R}ops... algo deu ruim{W}")
